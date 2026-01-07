@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <head>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Caveat&family=Permanent+Marker&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOLETO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .tabla_encabezado {
+             border-collapse: collapse;
+            width: 100%;
+            border: 0px solid;
+            padding: 0px;
+            margin-top: -5px;
+        }
+        .tabla_encabezado td:nth-child(1) {
+    width: 46%; /* Primera columna */
+    text-align: center;
+    
+}
+        /* Reducir interlineado solo en la segunda columna de la tabla de encabezado */
+        .tabla_encabezado td:nth-child(2) {
+            line-height: 1; /* ajustar interlineado entre <br> */
+            padding-top:2px;
+            padding-bottom: 2px;
+          
+            text-align: left;
+             width: 54%; /* Segunda columna */
+        }
+        /* Quitar bordes verticales (izquierda/derecha) únicamente en la tabla de encabezado */
+        .tabla_encabezado td {
+            border-left: none !important;
+            border-right: none !important;
+            border-top: none !important;
+            border-bottom: none !important;
+        }
+        body {
+            width: 6.8cm;
+            height: 14.5cm;
+            margin: 0 auto;
+            margin-top:-1px;
+            margin-bottom: -2px
+        }
+        .container {
+            text-align: justify;
+            text-align-last: justify;
+            font-size: 12px; 
+            font-family: Arial, sans-serif;
+            margin-top: -10px;
+            margin-bottom: -10px;
+        }
+        .parrafo-inferior {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            line-height: 4px;
+        }
+        .centrar-texto {
+            text-align: center;
+        }
+        h2 {
+            font-size: 13.5px;
+            font-family: 'Lexend', sans-serif;
+            margin-bottom: 5px;
+            line-height: 1;
+            padding: 0px;
+            margin-top: 15px;
+            letter-spacing: 1.2px;
+            font-weight: 350;
+        }
+        
+        table, th, td {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: -5px;
+            border-bottom: 0px solid #C0C0C0;
+            margin-top: 6px;
+        }
+        td {
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+            padding: 4px;
+            border: 0px solid #C0C0C0;
+        }
+        th {
+            font-size: 12px;
+            padding: 5px;
+            font-family: 'Oswald', sans-serif;
+            background-color: #CECECE;
+            border: 1px solid;
+            font-weight: 500;
+        }
+        th:nth-child(1), td:nth-child(1) {
+            width: 43%;
+        }
+        th:nth-child(2), td:nth-child(2) {
+            width: 30%;
+        }
+        th:nth-child(3), td:nth-child(3) {
+            width: 27%;
+        }
+        tr:nth-child(n+3):nth-child(-n+14) td {
+            border-bottom: 1px solid #A9A9A9;
+        }
+    tr:nth-child(n+1):nth-child(-n+14) td {
+            border-right: 1px solid #A9A9A9;
+            border-left: 1px solid #A9A9A9;
+        }
+        td.especial {
+            border-bottom: 1px dashed #C0C0C0;
+        }
+        .red {
+            color: red;
+            font-weight: bold;
+            font-size: 14px; /* Tamaño del signo de exclamación */
+        }
+        @media print {
+            body {
+                margin-top: 0;
+                padding-top: 0;
+            }
+        }
+        @page {
+    margin: 1mm; /* Márgenes personalizados */
+        }
+    </style>
+    <script>
+        // Función para obtener los parámetros de la URL
+        function getQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const campos = ["Nombre", "apellido", "Fecha", "Hora", "cant_bombon", "cant_granizado", "cant_arbolito", "cant_tamarindo", "cant_agua", "cant_cono", "cant_bombonato", "cant_crocante", "cant_chococo", "cant_sandwich", "cant_vasotapa", "cant_festino", "cant_canaleado", "cant_wafer", "valor","otros"];
+
+            // Rellenar los campos si existen en los parámetros de la URL
+            campos.forEach(campo => {
+                const valor = urlParams.get(campo);
+                if (valor !== null) {
+                    const elemento = document.getElementById(campo);
+                    elemento.innerHTML = valor;
+                }
+            });
+            // Ocultar filas si "cantidad" es vacía o cero
+        document.querySelectorAll("tbody tr").forEach(tr => {
+            const cantidadTd = tr.querySelector("td:nth-child(2)"); // Segunda columna
+            if (cantidadTd) {
+                const cantidad = cantidadTd.innerText.trim();
+                if (cantidad === "" || cantidad === "0") {
+                    tr.style.display = "none";
+                }
+            }
+        });
+
+        // Ocultar contenido de la primera celda de la última fila si el span #otros está vacío
+        (function() {
+            const otrosSpan = document.getElementById('otros');
+            if (!otrosSpan) return;
+            const texto = otrosSpan.innerText || otrosSpan.textContent || '';
+            if (texto.trim() === '') {
+                const td = otrosSpan.closest('td');
+                if (td) td.innerHTML = '';
+            }
+        })();
+
+            // Detectar y estilizar signos de exclamación
+            const elementos = document.querySelectorAll('p, td, h2, span'); // Seleccionar elementos con texto
+            elementos.forEach(el => {
+                el.innerHTML = el.innerHTML.replace(/(!)/g, '<span class="red">$1</span>');
+            });
+
+            // Imprimir automáticamente
+            window.print();
+        }
+
+       
+        window.onafterprint = window.close;
+    window.onload = getQueryParams; // Ejecutar al cargar la página
+
+    </script>
+</head>
+<body onload="getQueryParams()" onfocus="window.close()">
+    <div class="centrar-texto">
+        <h2>PAPELITO DE PEDIDOS</h2>
+    </div>
+    <p class="parrafo-inferior" style="font-size:11px; margin-top: 1px;">📲73196102-72627865</p>
+    <table class="tabla_encabezado">
+        <tr>
+            <td><img src="primavera.png" alt="Logo Primavera" style="width:1.5cm; height: 0.8cm;vertical-align: middle;"></td>
+            <td style=" font-size: 12px; 
+            font-family: Arial, sans-serif;">
+             <div style="display: grid; grid-template-columns: auto 1fr; gap: 2px; align-items: baseline;">
+                <div>Para:</div>
+                <div style="display: inline;">
+                    <span id="Nombre"></span> 
+                    <span id="apellido">
+                    </span>
+                </div>
+                
+                <div>Fecha:</div>
+                <div id="Fecha"></div>
+                
+                <div>Hora:</div>
+                <div id="Hora"></div>
+            </div></td>
+        </tr>
+    </table>
+    
+
+    <table>
+        <thead>
+            <tr>
+                <th>PRODUCTO</th>
+                <th>CANTIDAD</th>
+                <th>SOBRA</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Bombón (1.30)</td>
+                <td class="especial" id="cant_bombon"></td>
+                <td class="especial"></td>
+            </tr>
+            <tr>
+                <td>Granizado (1.30)</td>
+                <td class="especial" id="cant_granizado"></td>
+                <td class="especial"></td>
+            </tr>
+            <tr>
+                <td>Arbolito (1.30)</td>
+                <td id="cant_arbolito"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Gem/Tamarin(0.80)</td>
+                <td id="cant_tamarindo"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>De_Colores(0.60)</td>
+                <td id="cant_agua"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Wafer (1.50)</td>
+                <td id="cant_wafer"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td style="font-family:Arial Narrow Bold', sans-serif">V_Canaleado(1.40)</td>
+                <td id="cant_canaleado"></td>
+                <td></td>
+            </tr>
+           <tr>
+                <td>Vaso_tapa (2)</td>
+                <td id="cant_vasotapa"></td>
+                <td></td>
+            </tr> 
+            <tr>
+                <td>Cono (2.50)</td>
+                <td id="cant_cono"></td>
+                <td></td>
+            </tr>
+             <tr>
+                <td>Bombonato (2.50)</td>
+                <td id="cant_bombonato"></td>
+                <td></td>
+            </tr>
+            
+            <tr>
+                <td>Crocante (3)</td>
+                <td id="cant_crocante"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chococo (3)</td>
+                <td id="cant_chococo"></td>
+                <td></td>
+            </tr>
+          <tr>
+                <td>Sanwich (3.50)</td>
+                <td id="cant_sandwich"></td>
+                <td></td>
+            </tr>  
+           
+            <tr>
+                <td>Festino (4)</td>
+                <td id="cant_festino"></td>
+                <td></td>
+            </tr>
+             <tr>
+                <td style="font-size:12px; color: gray">Otros(Bs):<span id="otros" style="margin-left: 8px"></span></td>
+                <td style="font-size: 14px; text-align:right">Valor:</td>
+                <td style="font-size: 14px;text-align:center"><strong id="valor"></strong></td>
+            </tr>
+            
+        </tbody>
+    </table> 
+    <div class="parrafo-inferior">
+        <p style="font-size: 11px">&#128073; Por favor revise este ticket antes de salir </p>
+        
+        <p style="font-size: 16px; font-family:'Dancing Script', cursive;margin-top: -3px;"> Que tenga una exelente venta </p>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
